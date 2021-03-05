@@ -34,16 +34,26 @@ const getThreeRandomFriends = async () => {
         const isIncluded = numbCandidates.includes(number);
         if (isIncluded) {
             continue;
-        } 
+        }
         numbCandidates.push(number);
     }
-    
+
     const threeFriends = [];
-    numbCandidates.forEach((number)=> {
+    numbCandidates.forEach((number) => {
         threeFriends.push(allFriends[number]);
     });
 
     return threeFriends;
 }
 
-module.exports = { getAllFriends, getThreeRandomFriends, readFile };
+const getThreeRandomFriendsConcat = async () => {
+    const threeFriends = await getThreeRandomFriends();
+    let stringFriends = "";
+    threeFriends.forEach((friend) => {
+        stringFriends += `@${friend.username} `;
+    });
+
+    return stringFriends;
+}
+
+module.exports = { getAllFriends, getThreeRandomFriends, getThreeRandomFriendsConcat };
