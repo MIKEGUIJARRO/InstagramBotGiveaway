@@ -1,5 +1,5 @@
 const commentHandler = async (urlPost, page, post)=> {
-    await page.goto(urlPost);
+    //await page.goto(urlPost);
     await page.waitForSelector('textarea', { visible: true });
 
     const commentInput = await page.waitForSelector('textarea', { visible: true });

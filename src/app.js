@@ -39,11 +39,13 @@ const PASSWORD = process.env.PASSWORD;
     }
 
     //Get friends list
-    const friendsConcat = await getThreeRandomFriendsConcat(USERNAME);
     const urlPost = "https://www.instagram.com/p/CMAGZ5wrnFU/";
-
-    await commentHandler(urlPost, page, friendsConcat);
-
+    await page.goto(urlPost);
+    for (let i = 0; i < 10; i++) {
+        const friendsConcat = await getThreeRandomFriendsConcat(USERNAME);
+        await commentHandler(urlPost, page, friendsConcat);
+        await page.waitForTimeout(1000 * 60);
+    }
 
     /*  await page.addScriptTag({ path: path.join(path.dirname(require.main.filename), "helpers", "scriptFriends.js") });
      const response = await page.evaluate(async () => {
@@ -65,22 +67,6 @@ const PASSWORD = process.env.PASSWORD;
     }); */
 
     //Get Users data
-
-
-
-    /*     const callback = async (page) => {
-            console.log(page);
-            const post = await getThreeRandomFriendsConcat();
-            const commentInput = await page.waitForSelector('textarea');
-            const postBtn = await page.waitForSelector('button[type="submit"]');
-            await commentInput.type(post);
-            console.log(`Post made: ${post}`);
-            await postBtn.click();
-        } */
-
-    //await executeIntervals(1000 * 60, 1000 * 30, 0, callback.bind(this, page));
-
-
 
     await page.waitForTimeout(5000);
     await browser.close();
