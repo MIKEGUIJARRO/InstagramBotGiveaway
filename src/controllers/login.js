@@ -9,6 +9,8 @@ const loginHandler = async (page, username, password) => {
     await usernameInput.type(username, { delay: 100 });
     await passwordInput.type(password, { delay: 100 });
     await signInBtn.click();
+
+    await page.waitForTimeout(5000);
     await page.waitForSelector('img[alt="Instagram"]', { visible: true });
 
     //Click IG LOGO to avoid messages

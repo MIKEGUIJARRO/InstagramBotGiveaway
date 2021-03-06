@@ -1,14 +1,18 @@
 const puppeteer = require('puppeteer');
 const path = require("path");
 
-const { getThreeRandomFriendsConcat } = require("./helpers/getFriends");
+const { getThreeRandomFriendsConcat, getAllFriends } = require("./helpers/getFriends");
 const { saveCookies, setCookies, isCookiesDataAvailable } = require("./helpers/cookiesManagment");
 
 const executeIntervals = require("./helpers/executeIntervals");
 
+//Helpers
+const { mergeFriendsData } = require("./helpers/getFriends");
+
 //Controllers
 const loginHandler = require("./controllers/login");
 const commentHandler = require("./controllers/comment");
+const { getDataFollowers, getDataFollowing } = require("./controllers/user");
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
@@ -24,6 +28,10 @@ const PASSWORD = process.env.PASSWORD;
     if (!isCookiesDataAvailable()) {
         //Login
         await loginHandler(page, USERNAME, PASSWORD);
+        //Get initial followers data and merge it
+        await getDataFollowers(USERNAME, page);
+        await getDataFollowing(USERNAME, page);
+        await mergeFriendsData(USERNAME);
         //Save cookies
         await saveCookies(page);
     } else {
@@ -31,6 +39,12 @@ const PASSWORD = process.env.PASSWORD;
     }
 
     //Get friends list
+    const friendsConcat = await getThreeRandomFriendsConcat(USERNAME);
+    const urlPost = "https://www.instagram.com/p/CMAGZ5wrnFU/";
+
+    await commentHandler(urlPost, page, friendsConcat);
+
+
     /*  await page.addScriptTag({ path: path.join(path.dirname(require.main.filename), "helpers", "scriptFriends.js") });
      const response = await page.evaluate(async () => {
          try {
@@ -44,11 +58,15 @@ const PASSWORD = process.env.PASSWORD;
      console.log(response); */
 
     //Go to giveaway page
-    const urlPost = "https://www.instagram.com/p/CMAGZ5wrnFU/";
+    /* const urlPost = "https://www.instagram.com/p/CMAGZ5wrnFU/";
     await commentHandler(urlPost, page, async () => {
         const randomFriends = await getThreeRandomFriendsConcat();
         return randomFriends;
-    });
+    }); */
+
+    //Get Users data
+
+
 
     /*     const callback = async (page) => {
             console.log(page);
@@ -64,6 +82,6 @@ const PASSWORD = process.env.PASSWORD;
 
 
 
-    await page.waitForTimeout(100000);
+    await page.waitForTimeout(5000);
     await browser.close();
 })();
